@@ -27,11 +27,15 @@ def construct_parser() -> argparse.ArgumentParser:
 
 def fetch_versions():
     contents = str(urllib.request.urlopen(url=default_url).read())
-    print(contents)
     row_pattern = r"(<tr>(.+?)<\/tr>)+"
+    metadata_pattern = r'<td class="n"><a href=".+\/">(?P<Version>\d(.\d)+)<\/a>\/<\/td><td class="m">(.+)<\/td>' \
+                       r'<td class="s">.+$'
     rows = re.findall(row_pattern, contents)
     for row in rows:
-        print(row[1])
+        result = re.search(metadata_pattern, row[1])
+        if result is None:
+            continue
+        print(result.groupdict())
 
 
 def get_godot_versions():
